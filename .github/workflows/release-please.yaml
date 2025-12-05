@@ -11,7 +11,6 @@ jobs:
     steps:
       - uses: google-github-actions/release-please-action@v4
         id: release
-        manifest-file: .release-please-manifest.json
         with:
           release-type: simple
           package-name: nallo_cgu_configs
