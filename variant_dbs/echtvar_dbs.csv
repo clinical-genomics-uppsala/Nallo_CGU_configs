@@ -1,0 +1,4 @@
+sample,file
+colorsdb,/proj/ngi2024001/nobackup/bin/wp3_hifi_hg/nallo_refs/nallo_refs_0.3.1/CoLoRSdb.GRCh38.v1.2.0.deepvariant.glnexus.vcf.gz.zip
+gnomad,/proj/ngi2024001/nobackup/bin/wp3_hifi_hg/nallo_refs/nallo_refs_0.3.1/gnomad_snvs.zip
+gos,/proj/ngi2024001/nobackup/bin/wp3_hifi_hg/nallo_refs/nallo_refs_0.3.1/gos_288_samples_snv_frequencies_hg38_20251106.echtvar.zip
