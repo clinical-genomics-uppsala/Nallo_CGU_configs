@@ -1,5 +1,5 @@
 # Nallo_CGU_configs
-Configuration and parameters for running Nallo GMS pipeline at CGU
+Configuration and parameters for running Nallo GMS pipeline at CGU on Miarka
 
 
 ## Config files
