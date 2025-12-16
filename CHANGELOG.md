@@ -1,4 +1,12 @@
 # Changelog
+## [1.1.3](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/compare/v1.1.2...v1.1.3) (2025-12-16)
+
+### Bug Fixes
+
+* handle numeric only ids by prefixing with D- ([d025853](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/commit/d025853670ea8eed44f15766da8137cd768e1c9d))
+* trigger build workflow ([b2cd451](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/commit/b2cd4512881786738b0c64ee7007e4e602f812cc))
+* Update Python version in build environment ([6961f60](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/commit/6961f604e770829390e735778d41851ff6618a10))
+
 
 ## [1.1.2](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/compare/nallo_cgu_configs-v1.1.1...nallo_cgu_configs-v1.1.2) (2025-12-16)
 
