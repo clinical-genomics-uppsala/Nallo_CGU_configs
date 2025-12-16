@@ -1,2 +1,4 @@
 pandas==2.3.3
 hydra-genetics==3.3.0
+jsonschema==4.23.0
+
