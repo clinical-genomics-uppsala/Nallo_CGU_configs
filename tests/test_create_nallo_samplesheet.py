@@ -238,3 +238,48 @@ def test_missing_multiple_columns(tmp_path):
     assert "sample" in result.stderr
     assert "bam" in result.stderr
 
+def test_custom_output_path(tmp_path):
+    """Test that the --output argument allows specifying a custom output path."""
+    # Create dummy units.tsv
+    units_data = {
+        "sample": ["sample1"],
+        "bam": ["/path/to/sample1.bam"]
+    }
+    units_file = tmp_path / "units.tsv"
+    pd.DataFrame(units_data).to_csv(units_file, sep="\t", index=False)
+
+    # Create dummy samples_info.csv
+    samples_info_data = {
+        "Provnummer": ["sample1"],
+        "Sex": ["Male"]
+    }
+    samples_info_file = tmp_path / "samples_info.csv"
+    pd.DataFrame(samples_info_data).to_csv(samples_info_file, index=False)
+
+    # Specify a custom output path
+    custom_output = tmp_path / "custom_output.csv"
+    
+    cmd = [
+        sys.executable,
+        SCRIPT_PATH,
+        "--units", str(units_file),
+        "--samples-info", str(samples_info_file),
+        "--project-id", "TEST_PROJECT",
+        "--output", str(custom_output)
+    ]
+
+    result = subprocess.run(cmd, cwd=tmp_path, capture_output=True, text=True)
+    assert result.returncode == 0, f"Script failed with stderr: {result.stderr}"
+
+    # Check if custom output file was created
+    assert custom_output.exists(), f"Custom output file {custom_output} not created"
+    
+    # Verify the default output was NOT created
+    default_output = tmp_path / "nallo_samplesheet.csv"
+    assert not default_output.exists(), "Default output file should not be created when --output is specified"
+
+    # Verify content is correct
+    result_df = pd.read_csv(custom_output)
+    assert len(result_df) == 1
+    assert result_df.iloc[0]["sample"] == "sample1"
+
