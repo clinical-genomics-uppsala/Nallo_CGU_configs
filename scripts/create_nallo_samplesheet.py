@@ -24,7 +24,7 @@ def main():
     samplesheet_df["family_id"] = samplesheet_df["sample"]
     samplesheet_df["paternal_id"] = ["0"] * samplesheet_df.shape[0]
     samplesheet_df["maternal_id"] = ["0"] * samplesheet_df.shape[0]    
-    samplesheet_df["phenotype"] = ["0"] * samplesheet_df.shape[0]
+    samplesheet_df["phenotype"] = "0"
     samplesheet_df["project"] = [project_id] * samplesheet_df.shape[0]
     samplesheet_df.rename(columns={"bam": "file"}, inplace=True)
 
