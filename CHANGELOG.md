@@ -1,4 +1,11 @@
 # Changelog
+## [1.1.4](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/compare/v1.1.3...v1.1.4) (2025-12-16)
+
+
+### Bug Fixes
+
+* handle mixed numeric and non-numeric sample ids ([e834875](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/commit/e83487594b5d7624599e9250fc15d324375f0dbb))
+
 ## [1.1.3](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/compare/v1.1.2...v1.1.3) (2025-12-16)
 
 ### Bug Fixes
