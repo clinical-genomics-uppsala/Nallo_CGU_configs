@@ -1,3 +1,17 @@
+# This workflow requires a Personal Access Token (PAT) with 'repo' and 'workflow' permissions
+# to trigger other workflows (like build_env.yml) when releases are created.
+# 
+# To set this up:
+# 1. Go to https://github.com/settings/tokens/new
+# 2. Create a fine-grained or classic token with 'repo' and 'workflow' scopes
+# 3. Add it as a repository secret named PAT_TOKEN:
+#    Settings → Secrets and variables → Actions → New repository secret
+# 4. Name: PAT_TOKEN
+# 5. Value: <your-token>
+#
+# The workflow will fall back to GITHUB_TOKEN if PAT_TOKEN is not set,
+# but build_env.yml will NOT trigger automatically without a PAT.
+
 on:
   push: 
     branches:
@@ -15,3 +29,4 @@ jobs:
           config-file: .release-please-config.json
           manifest-file: .release-please-manifest.json
           target-branch: main
+          token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
