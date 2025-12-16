@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/compare/nallo_cgu_configs-v1.1.1...nallo_cgu_configs-v1.1.2) (2025-12-16)
+
+
+### Bug Fixes
+
+* trigger build workflow ([b2cd451](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/commit/b2cd4512881786738b0c64ee7007e4e602f812cc))
+
 ## [1.1.1](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/compare/nallo_cgu_configs-v1.1.0...nallo_cgu_configs-v1.1.1) (2025-12-16)
 
 
