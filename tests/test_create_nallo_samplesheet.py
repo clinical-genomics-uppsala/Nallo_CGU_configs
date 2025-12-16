@@ -326,10 +326,10 @@ def test_numeric_sample_prefixing(tmp_path):
 
 def test_mixed_numeric_and_alphanumeric_samples(tmp_path):
     """Test that only numeric sample IDs are prefixed with 'D-' in mixed datasets."""
-    # Mixed samples: one numeric (52662) and one alphanumeric (D19-07356)
+    # Mixed samples: one numeric (52662) and one alphanumeric (D99-07356)
     units_data = {
-        "sample": [52662, "D19-07356"],
-        "bam": ["/path/to/52662.bam", "/path/to/D19-07356.bam"]
+        "sample": [52662, "D99-07356"],
+        "bam": ["/path/to/52662.bam", "/path/to/D99-07356.bam"]
     }
     units_file = tmp_path / "units.tsv"
     pd.DataFrame(units_data).to_csv(units_file, sep="\t", index=False)
@@ -362,12 +362,12 @@ def test_mixed_numeric_and_alphanumeric_samples(tmp_path):
     # Check that numeric sample was prefixed
     assert "D-52662" in result_df["sample"].values
     # Check that alphanumeric sample was NOT modified
-    assert "D19-07356" in result_df["sample"].values
+    assert "D99-07356" in result_df["sample"].values
     
     # Verify both merges worked correctly
     row1 = result_df[result_df["sample"] == "D-52662"].iloc[0]
     assert row1["sex"] == 1  # Male
     
-    row2 = result_df[result_df["sample"] == "D19-07356"].iloc[0]
+    row2 = result_df[result_df["sample"] == "D99-07356"].iloc[0]
     assert row2["sex"] == 2  # Female
 
