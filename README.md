@@ -17,3 +17,6 @@ Config files are found under config:
 [echtvar_dbs.csv](variant_dbs/echtvar_dbs.csv): file listing the echtvar databases used to annotate snv and indels with population allele frequencies
 
 [svdb_dbs.csv](variant_dbs/svdb_dbs.csv): file listing the svdb databases to be queried with svdb query to annotate SVs with population allele frequencies
+
+## scripts
+[create_nallo_samplesheet.py](scripts/create_nallo_samplesheet.py): python script to create the Nallo samplesheet.csv file
