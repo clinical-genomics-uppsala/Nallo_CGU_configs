@@ -14,7 +14,7 @@ jobs:
       - name: Set up Conda
         uses: conda-incubator/setup-miniconda@v3
         with:
-          python-version: '3.13'
+          python-version: '3.11'
           auto-activate-base: false
 
       - name: Create Conda Environment
@@ -38,7 +38,7 @@ jobs:
 
       - name: Check Size
         run: |
-          ls -lh python313_env.tar.gz
+          ls -lh nallo_cgu_env.tar.gz
           echo "Environment size checked."
 
       - name: Upload Release Asset
