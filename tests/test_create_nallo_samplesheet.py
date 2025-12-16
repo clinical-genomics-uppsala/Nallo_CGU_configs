@@ -336,7 +336,7 @@ def test_mixed_numeric_and_alphanumeric_samples(tmp_path):
 
     # Info also has mixed provnummer
     samples_info_data = {
-        "Provnummer": [52662, "D19-07356"],
+        "Provnummer": [52662, "D99-07356"],
         "Sex": ["Male", "Female"]
     }
     samples_info_file = tmp_path / "samples_info.csv"
