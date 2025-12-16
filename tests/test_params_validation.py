@@ -5,7 +5,33 @@ from pathlib import Path
 
 # Path to params file
 PARAMS_FILE = Path(__file__).parent.parent / "params" / "nallo-cgu-params.revio_wgs.json"
-NALLO_VERSION = "0.8.1"
+VERSION_FILE = Path(__file__).parent.parent / "NALLO_VERSION"
+
+# Read Nallo version from VERSION file
+def get_nallo_version():
+    """Read the target Nallo version from NALLO_VERSION file."""
+    if VERSION_FILE.exists():
+        return VERSION_FILE.read_text().strip()
+    return "0.8.1"  # Fallback default
+
+NALLO_VERSION = get_nallo_version()
+
+
+def test_nallo_version_file_exists():
+    """Test that NALLO_VERSION file exists and has valid format."""
+    assert VERSION_FILE.exists(), f"NALLO_VERSION file not found: {VERSION_FILE}"
+    
+    version = VERSION_FILE.read_text().strip()
+    assert len(version) > 0, "NALLO_VERSION file should not be empty"
+    
+    # Check that version follows semantic versioning (e.g., 0.8.1)
+    parts = version.split('.')
+    assert len(parts) >= 2, f"Version should have at least major.minor format, got: {version}"
+    
+    # Check that parts are numeric
+    for i, part in enumerate(parts[:3]):  # Check up to major.minor.patch
+        assert part.isdigit(), f"Version part {i} should be numeric, got: {part}"
+
 
 
 def test_params_file_exists():

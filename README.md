@@ -1,6 +1,13 @@
 # Nallo_CGU_configs
 Configuration and parameters for running Nallo GMS pipeline at CGU on Miarka
 
+## Compatibility
+
+These configurations are compatible with **Nallo v0.8.1**.
+
+See [NALLO_VERSION](NALLO_VERSION) for the current target version.
+
+
 
 ## Config files
 
