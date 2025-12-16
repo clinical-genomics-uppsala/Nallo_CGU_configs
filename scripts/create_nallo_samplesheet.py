@@ -36,8 +36,16 @@ def main():
     units = pd.read_csv(args.units, sep="\t")
     validate_columns(units, ["sample", "bam"], args.units)
 
+    # Prefix numeric sample IDs with D-
+    if units["sample"].astype(str).str.match(r'^\d+$').all():
+        units["sample"] = "D-" + units["sample"].astype(str)
+
     samples_info = pd.read_csv(args.samples_info)
     validate_columns(samples_info, ["Provnummer", "Sex"], args.samples_info)
+
+    # Also prefix Provnummer if all samples were numeric
+    if samples_info["Provnummer"].astype(str).str.match(r'^\d+$').all():
+        samples_info["Provnummer"] = "D-" + samples_info["Provnummer"].astype(str)
 
     project_id = args.project_id
 

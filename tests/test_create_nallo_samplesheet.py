@@ -283,3 +283,43 @@ def test_custom_output_path(tmp_path):
     assert len(result_df) == 1
     assert result_df.iloc[0]["sample"] == "sample1"
 
+
+def test_numeric_sample_prefixing(tmp_path):
+    """Test that numeric sample IDs are prefixed with 'D-'."""
+    # Numeric samples: 52662
+    units_data = {
+        "sample": [52662],
+        "bam": ["/path/to/52662.bam"]
+    }
+    units_file = tmp_path / "units.tsv"
+    pd.DataFrame(units_data).to_csv(units_file, sep="\t", index=False)
+
+    # Info also has numeric provnummer
+    samples_info_data = {
+        "Provnummer": [52662],
+        "Sex": ["Male"]
+    }
+    samples_info_file = tmp_path / "samples_info.csv"
+    pd.DataFrame(samples_info_data).to_csv(samples_info_file, index=False)
+
+    project_id = "TEST_PROJECT"
+    output_file = tmp_path / "nallo_samplesheet.csv"
+
+    cmd = [
+        sys.executable,
+        SCRIPT_PATH,
+        "--units", str(units_file),
+        "--samples-info", str(samples_info_file),
+        "--project-id", project_id
+    ]
+
+    result = subprocess.run(cmd, cwd=tmp_path, capture_output=True, text=True)
+    assert result.returncode == 0
+    
+    result_df = pd.read_csv(output_file)
+    assert len(result_df) == 1
+    # Check that sample was renamed D-52662
+    assert result_df.iloc[0]["sample"] == "D-52662"
+    # Check that merge worked (which implies Provnummer was matched correctly)
+    assert result_df.iloc[0]["sex"] == 1
+
