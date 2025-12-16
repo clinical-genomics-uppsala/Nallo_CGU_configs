@@ -28,7 +28,7 @@ def validate_columns(df, required_columns, file_path):
 def main():
     parser = argparse.ArgumentParser(description='Create Nallo samplesheet from units and sample info files')
     parser.add_argument('--units', required=True, help='Path to units TSV file')
-    parser.add_argument('--samples-info', required=True, help='Path to samples info Excel file')
+    parser.add_argument('--samples-info', required=True, help='Path to samples info CSV file')
     parser.add_argument('--project-id', required=True, help='Project ID string')
     args = parser.parse_args()
 
