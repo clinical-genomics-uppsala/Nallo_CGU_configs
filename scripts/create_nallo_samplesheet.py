@@ -37,15 +37,17 @@ def main():
     validate_columns(units, ["sample", "bam"], args.units)
 
     # Prefix numeric sample IDs with D-
-    if units["sample"].astype(str).str.match(r'^\d+$').all():
-        units["sample"] = "D-" + units["sample"].astype(str)
+    units["sample"] = units["sample"].astype(str)
+    numeric_mask = units["sample"].str.match(r'^\d+$')
+    units.loc[numeric_mask, "sample"] = "D-" + units.loc[numeric_mask, "sample"]
 
     samples_info = pd.read_csv(args.samples_info)
     validate_columns(samples_info, ["Provnummer", "Sex"], args.samples_info)
 
-    # Also prefix Provnummer if all samples were numeric
-    if samples_info["Provnummer"].astype(str).str.match(r'^\d+$').all():
-        samples_info["Provnummer"] = "D-" + samples_info["Provnummer"].astype(str)
+    # Also prefix Provnummer for numeric entries
+    samples_info["Provnummer"] = samples_info["Provnummer"].astype(str)
+    numeric_mask_info = samples_info["Provnummer"].str.match(r'^\d+$')
+    samples_info.loc[numeric_mask_info, "Provnummer"] = "D-" + samples_info.loc[numeric_mask_info, "Provnummer"]
 
     project_id = args.project_id
 
