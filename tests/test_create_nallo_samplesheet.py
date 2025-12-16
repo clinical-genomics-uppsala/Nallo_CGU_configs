@@ -144,3 +144,95 @@ def test_sex_conversion_na_unknown(tmp_path):
     # Both should have sex = 0
     assert result_df.loc[result_df["sample"] == "sample3", "sex"].values[0] == 0
     assert result_df.loc[result_df["sample"] == "sample4", "sex"].values[0] == 0
+
+def test_missing_column_in_units(tmp_path):
+    """Test that the script fails with clear error when required column is missing in units file."""
+    # Missing 'bam' column
+    units_data = {
+        "sample": ["sample1", "sample2"],
+        "file_path": ["/path/to/sample1.bam", "/path/to/sample2.bam"]  # Wrong column name
+    }
+    units_file = tmp_path / "units.tsv"
+    pd.DataFrame(units_data).to_csv(units_file, sep="\t", index=False)
+
+    samples_info_data = {
+        "Provnummer": ["sample1", "sample2"],
+        "Sex": ["Male", "Female"]
+    }
+    samples_info_file = tmp_path / "samples_info.csv"
+    pd.DataFrame(samples_info_data).to_csv(samples_info_file, index=False)
+
+    cmd = [
+        sys.executable,
+        SCRIPT_PATH,
+        "--units", str(units_file),
+        "--samples-info", str(samples_info_file),
+        "--project-id", "TEST_PROJECT"
+    ]
+
+    result = subprocess.run(cmd, cwd=tmp_path, capture_output=True, text=True)
+    assert result.returncode == 1
+    assert "Missing required columns" in result.stderr
+    assert "bam" in result.stderr
+
+def test_missing_column_in_samples_info(tmp_path):
+    """Test that the script fails with clear error when required column is missing in samples info file."""
+    units_data = {
+        "sample": ["sample1", "sample2"],
+        "bam": ["/path/to/sample1.bam", "/path/to/sample2.bam"]
+    }
+    units_file = tmp_path / "units.tsv"
+    pd.DataFrame(units_data).to_csv(units_file, sep="\t", index=False)
+
+    # Missing 'Sex' column
+    samples_info_data = {
+        "Provnummer": ["sample1", "sample2"],
+        "Gender": ["Male", "Female"]  # Wrong column name
+    }
+    samples_info_file = tmp_path / "samples_info.csv"
+    pd.DataFrame(samples_info_data).to_csv(samples_info_file, index=False)
+
+    cmd = [
+        sys.executable,
+        SCRIPT_PATH,
+        "--units", str(units_file),
+        "--samples-info", str(samples_info_file),
+        "--project-id", "TEST_PROJECT"
+    ]
+
+    result = subprocess.run(cmd, cwd=tmp_path, capture_output=True, text=True)
+    assert result.returncode == 1
+    assert "Missing required columns" in result.stderr
+    assert "Sex" in result.stderr
+
+def test_missing_multiple_columns(tmp_path):
+    """Test that the script fails with clear error when multiple columns are missing."""
+    # Missing 'sample' column
+    units_data = {
+        "sample_id": ["sample1", "sample2"],  # Wrong column name
+        "file": ["/path/to/sample1.bam", "/path/to/sample2.bam"]  # Wrong column name
+    }
+    units_file = tmp_path / "units.tsv"
+    pd.DataFrame(units_data).to_csv(units_file, sep="\t", index=False)
+
+    samples_info_data = {
+        "Provnummer": ["sample1", "sample2"],
+        "Sex": ["Male", "Female"]
+    }
+    samples_info_file = tmp_path / "samples_info.csv"
+    pd.DataFrame(samples_info_data).to_csv(samples_info_file, index=False)
+
+    cmd = [
+        sys.executable,
+        SCRIPT_PATH,
+        "--units", str(units_file),
+        "--samples-info", str(samples_info_file),
+        "--project-id", "TEST_PROJECT"
+    ]
+
+    result = subprocess.run(cmd, cwd=tmp_path, capture_output=True, text=True)
+    assert result.returncode == 1
+    assert "Missing required columns" in result.stderr
+    assert "sample" in result.stderr
+    assert "bam" in result.stderr
+

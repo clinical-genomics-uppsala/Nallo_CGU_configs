@@ -1,8 +1,28 @@
 import pandas as pd
 import argparse
+import sys
 
 # Opt-in to future behavior for replace() to avoid FutureWarning
 pd.set_option('future.no_silent_downcasting', True)
+
+def validate_columns(df, required_columns, file_path):
+    """
+    Validate that a DataFrame contains all required columns.
+    
+    Args:
+        df: pandas DataFrame to validate
+        required_columns: list of column names that must be present
+        file_path: path to the file (for error messages)
+    
+    Raises:
+        SystemExit: if any required columns are missing
+    """
+    missing_columns = [col for col in required_columns if col not in df.columns]
+    if missing_columns:
+        print(f"Error: Missing required columns in {file_path}:", file=sys.stderr)
+        print(f"  Missing: {', '.join(missing_columns)}", file=sys.stderr)
+        print(f"  Available: {', '.join(df.columns.tolist())}", file=sys.stderr)
+        sys.exit(1)
 
 # Parse command-line arguments
 def main():
@@ -13,8 +33,10 @@ def main():
     args = parser.parse_args()
 
     units = pd.read_csv(args.units, sep="\t")
+    validate_columns(units, ["sample", "bam"], args.units)
 
     samples_info = pd.read_csv(args.samples_info)
+    validate_columns(samples_info, ["Provnummer", "Sex"], args.samples_info)
 
     project_id = args.project_id
 
