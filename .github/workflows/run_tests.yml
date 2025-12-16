@@ -23,6 +23,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt pytest
 
+      - name: Install Nextflow
+        run: |
+          wget -qO- https://get.nextflow.io | bash
+          sudo mv nextflow /usr/local/bin/
+          nextflow -version
+
       - name: Run tests
         run: |
           pytest tests/
+
