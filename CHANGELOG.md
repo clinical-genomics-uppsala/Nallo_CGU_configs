@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/compare/nallo_cgu_configs-v1.1.0...nallo_cgu_configs-v1.1.1) (2025-12-16)
+
+
+### Bug Fixes
+
+* Update Python version in build environment ([6961f60](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/commit/6961f604e770829390e735778d41851ff6618a10))
+
 ## [1.1.0](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/compare/nallo_cgu_configs-v1.0.0...nallo_cgu_configs-v1.1.0) (2025-12-16)
 
 
