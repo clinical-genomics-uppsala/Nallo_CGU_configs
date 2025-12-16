@@ -2,7 +2,6 @@ import os
 import sys
 import pandas as pd
 import subprocess
-import shutil
 
 # Path to the script under test
 SCRIPT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../scripts/create_nallo_samplesheet.py'))
