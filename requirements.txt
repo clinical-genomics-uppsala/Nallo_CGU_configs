@@ -1,0 +1,2 @@
+pandas==2.3.3
+hydra-genetics==3.3.0

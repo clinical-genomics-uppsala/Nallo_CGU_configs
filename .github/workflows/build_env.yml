@@ -1,0 +1,48 @@
+name: Build and Pack Environment
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build-env:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: '3.13'
+          auto-activate-base: false
+
+      - name: Create Conda Environment
+        shell: bash -l {0}
+        run: |
+          conda create -n myenv python=3.13 -y
+          conda activate myenv
+          conda install -c conda-forge conda-pack -y
+          if [ -f "requirements.txt" ]; then
+            pip install -r requirements.txt
+          else
+            echo "Requirements file not found at requirements.txt"
+            exit 1
+          fi
+
+      - name: Pack Environment
+        shell: bash -l {0}
+        run: |
+          conda activate myenv
+          conda pack -n myenv -o python313_env.tar.gz
+
+      - name: Check Size
+        run: |
+          ls -lh python313_env.tar.gz
+          echo "Environment size checked."
+
+      - name: Upload Release Asset
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: python313_env.tar.gz
