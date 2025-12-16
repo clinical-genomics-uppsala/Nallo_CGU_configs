@@ -1,6 +1,6 @@
 {
     "packages": {
-        ". ": {
+        ".": {
             "release-type": "simple",
             "package-name": "nallo_cgu_configs"
         }
