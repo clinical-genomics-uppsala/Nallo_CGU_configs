@@ -323,3 +323,51 @@ def test_numeric_sample_prefixing(tmp_path):
     # Check that merge worked (which implies Provnummer was matched correctly)
     assert result_df.iloc[0]["sex"] == 1
 
+
+def test_mixed_numeric_and_alphanumeric_samples(tmp_path):
+    """Test that only numeric sample IDs are prefixed with 'D-' in mixed datasets."""
+    # Mixed samples: one numeric (52662) and one alphanumeric (D19-07356)
+    units_data = {
+        "sample": [52662, "D19-07356"],
+        "bam": ["/path/to/52662.bam", "/path/to/D19-07356.bam"]
+    }
+    units_file = tmp_path / "units.tsv"
+    pd.DataFrame(units_data).to_csv(units_file, sep="\t", index=False)
+
+    # Info also has mixed provnummer
+    samples_info_data = {
+        "Provnummer": [52662, "D19-07356"],
+        "Sex": ["Male", "Female"]
+    }
+    samples_info_file = tmp_path / "samples_info.csv"
+    pd.DataFrame(samples_info_data).to_csv(samples_info_file, index=False)
+
+    project_id = "TEST_PROJECT"
+    output_file = tmp_path / "nallo_samplesheet.csv"
+
+    cmd = [
+        sys.executable,
+        SCRIPT_PATH,
+        "--units", str(units_file),
+        "--samples-info", str(samples_info_file),
+        "--project-id", project_id
+    ]
+
+    result = subprocess.run(cmd, cwd=tmp_path, capture_output=True, text=True)
+    assert result.returncode == 0, f"Script failed with stderr: {result.stderr}"
+    
+    result_df = pd.read_csv(output_file)
+    assert len(result_df) == 2
+    
+    # Check that numeric sample was prefixed
+    assert "D-52662" in result_df["sample"].values
+    # Check that alphanumeric sample was NOT modified
+    assert "D19-07356" in result_df["sample"].values
+    
+    # Verify both merges worked correctly
+    row1 = result_df[result_df["sample"] == "D-52662"].iloc[0]
+    assert row1["sex"] == 1  # Male
+    
+    row2 = result_df[result_df["sample"] == "D19-07356"].iloc[0]
+    assert row2["sex"] == 2  # Female
+
