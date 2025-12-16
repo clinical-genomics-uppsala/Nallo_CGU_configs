@@ -20,7 +20,7 @@ jobs:
       - name: Create Conda Environment
         shell: bash -l {0}
         run: |
-          conda create -n myenv python=3.13 -y
+          conda create -n myenv python=3.11 -y
           conda activate myenv
           conda install -c conda-forge conda-pack -y
           if [ -f "requirements.txt" ]; then
@@ -34,7 +34,7 @@ jobs:
         shell: bash -l {0}
         run: |
           conda activate myenv
-          conda pack -n myenv -o python313_env.tar.gz
+          conda pack -n myenv -o nallo_cgu_env.tar.gz
 
       - name: Check Size
         run: |
@@ -45,4 +45,4 @@ jobs:
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v1
         with:
-          files: python313_env.tar.gz
+          files: nallo_cgu_env.tar.gz
