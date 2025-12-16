@@ -30,6 +30,7 @@ def main():
     parser.add_argument('--units', required=True, help='Path to units TSV file')
     parser.add_argument('--samples-info', required=True, help='Path to samples info CSV file')
     parser.add_argument('--project-id', required=True, help='Project ID string')
+    parser.add_argument('--output', default='nallo_samplesheet.csv', help='Output CSV file path (default: nallo_samplesheet.csv)')
     args = parser.parse_args()
 
     units = pd.read_csv(args.units, sep="\t")
@@ -51,7 +52,7 @@ def main():
     samplesheet_df.rename(columns={"bam": "file"}, inplace=True)
 
     nallo_samplesheet = samplesheet_df[["project","sample","file","family_id","paternal_id","maternal_id","sex","phenotype"]]
-    nallo_samplesheet.to_csv("nallo_samplesheet.csv", index=False)
+    nallo_samplesheet.to_csv(args.output, index=False)
 
 if __name__ == "__main__":
     main()
