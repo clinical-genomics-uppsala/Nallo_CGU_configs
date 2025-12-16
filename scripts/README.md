@@ -1,0 +1,1 @@
+This script is executed in the Nallo start script, see https://github.com/clinical-genomics-uppsala/pipeline_start_scripts/blob/develop/miarka/start_wp3_hifi_wgs.sh
