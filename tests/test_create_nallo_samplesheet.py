@@ -73,6 +73,10 @@ def test_create_nallo_samplesheet(tmp_path):
     assert row2["project"] == project_id
     assert row2["file"] == "/path/to/sample2.bam"
     assert row2["sex"] == 2  # Female -> 2
+    assert row2["family_id"] == "sample2"
+    assert row2["paternal_id"] == 0
+    assert row2["maternal_id"] == 0
+    assert row2["phenotype"] == 0
 
 def test_create_nallo_samplesheet_missing_args(tmp_path):
     """Test that the script fails when required arguments are missing."""
