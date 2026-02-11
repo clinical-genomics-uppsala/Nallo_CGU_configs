@@ -1,4 +1,11 @@
 # Changelog
+## [1.2.0](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/compare/v1.1.4...v1.2.0) (2026-02-11)
+
+
+### Features
+
+* add modkit memory allocation ([28fd477](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/commit/28fd477a62647ca3fee2f8a6aee433aa91a798d7))
+
 ## [1.1.4](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/compare/v1.1.3...v1.1.4) (2025-12-16)
 
 
