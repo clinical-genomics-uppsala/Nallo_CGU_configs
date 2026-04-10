@@ -3,7 +3,6 @@
     "fasta": "/proj/ngi2024001/nobackup/bin/wp3_hifi_hg/nallo_refs/GRCh38_GIABv3_no_alt_analysis_set_maskedGRC_decoys_MAP2K3_KMT2C_KCNJ18.fasta",
     "alignment_output_format": "cram",
     "hifiasm_mode": "trio-binning",
-    "hifiasm_preset": null,
     "skip_genome_assembly": false,
     "skip_rank_variants": true,
     "skip_annotate_paralogs": true,

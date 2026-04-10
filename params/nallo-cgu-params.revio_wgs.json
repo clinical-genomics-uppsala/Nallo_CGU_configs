@@ -28,7 +28,7 @@
     "skip_prepare_gens_input": true,
     "mosdepth_d4_output": false,
     "paraphrase_output_format": "tsv",
-    "paraphrase_rules": "",
+    "paraphrase_rules": "/proj/ngi2024001/nobackup/bin/wp3_hifi_hg/nallo_refs/grch38_paraphrase_rules.yaml",
     "create_maf_track": true,
     "snv_caller": "deepvariant",
     "str_caller": "trgt",
