@@ -36,14 +36,14 @@ jobs:
 
       - name: Run Nextflow Stub
         run: |
-          export NXF_EXECUTOR_LOCAL_CPUS=12
+          export NXF_EXECUTOR_LOCAL_CPUS=4
           nextflow run genomic-medicine-sweden/nallo \
             -r "${{ env.VERSION }}" \
             -profile test,docker \
             -c config/nallo_CGU.config \
             -stub \
             --outdir nallo_res \
-            --max_cpus 12 \
+            --max_cpus 4 \
             --max_memory '6.GB'
 
       - name: Verify Expected CGU Output Filenames
