@@ -1,0 +1,56 @@
+name: Test Nallo Config
+
+on:
+  push:
+    paths:
+      - 'config/**'
+      - 'COMPATIBILITY.md'
+      - '.github/workflows/test_config.yml'
+  pull_request:
+    paths:
+      - 'config/**'
+      - 'COMPATIBILITY.md'
+      - '.github/workflows/test_config.yml'
+  workflow_dispatch:
+
+jobs:
+  test-config:
+    name: Run Nextflow Config Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nextflow
+        uses: nf-core/setup-nextflow@v2
+
+      - name: Read version from COMPATIBILITY.md
+        id: get_version
+        run: |
+          VERSION=$(grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' COMPATIBILITY.md | head -n 1)
+          if [ -z "$VERSION" ]; then
+            echo "Error: Could not find version in COMPATIBILITY.md"
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Run Nextflow Stub
+        run: |
+          nextflow run genomic-medicine-sweden/nallo \
+            -r "${{ env.VERSION }}" \
+            -profile test,docker \
+            -c config/nallo_CGU.config \
+            -stub \
+            --outdir nallo_res 
+
+      - name: Verify Expected CGU Output Filenames
+        run: |
+          if [ ! -f "nallo_res/snvs/family/FAM/FAM.hard-filtered.vcf.gz" ]; then
+            echo "Error: Expected clinical SNV output nallo_res/snvs/family/FAM/FAM.hard-filtered.vcf.gz not found!"
+            exit 1
+          fi
+          if [ ! -f "nallo_res/svs/family/FAM/FAM.cnv_sv.vcf.gz" ]; then
+            echo "Error: Expected clinical SV output nallo_res/svs/family/FAM/FAM.cnv_sv.vcf.gz not found!"
+            exit 1
+          fi
+          echo "Success: Nextflow withName rules successfully applied custom clinical filenames!"
