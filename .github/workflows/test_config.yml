@@ -43,7 +43,7 @@ jobs:
             -c config/nallo_CGU.config \
             -c bypass.config \
             -stub \
-            --outdir nallo_res \
+            --outdir nallo_res 
 
 
       - name: Verify Expected CGU Output Filenames
