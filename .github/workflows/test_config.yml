@@ -36,14 +36,12 @@ jobs:
 
       - name: Run Nextflow Stub
         run: |
-          echo "process { cpus = 2 }" > bypass.config
           nextflow run genomic-medicine-sweden/nallo \
             -r "${{ env.VERSION }}" \
             -profile test,docker \
             -c config/nallo_CGU.config \
-            -c bypass.config \
             -stub \
-            --outdir nallo_res 
+            --outdir nallo_res
 
 
       - name: Verify Expected CGU Output Filenames
