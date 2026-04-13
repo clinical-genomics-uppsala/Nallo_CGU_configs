@@ -41,7 +41,9 @@ jobs:
             -profile test,docker \
             -c config/nallo_CGU.config \
             -stub \
-            --outdir nallo_res 
+            --outdir nallo_res \
+            --max_cpus 2 \
+            --max_memory '6.GB' 
 
       - name: Verify Expected CGU Output Filenames
         run: |
