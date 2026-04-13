@@ -43,7 +43,7 @@ jobs:
             -c config/nallo_CGU.config \
             -stub \
             --outdir nallo_res \
-            --max_cpus 2 \
+            --max_cpus 12 \
             --max_memory '6.GB'
 
       - name: Verify Expected CGU Output Filenames
