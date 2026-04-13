@@ -3,12 +3,14 @@ name: Validate Parameters
 on:
   push:
     paths:
-      - 'params/**.json'
+      - 'params/**/*.json'
+      - 'COMPATIBILITY.md'
       - 'scripts/validate_params.py'
       - '.github/workflows/validate_params.yml'
   pull_request:
     paths:
-      - 'params/**.json'
+      - 'params/**/*.json'
+      - 'COMPATIBILITY.md'
       - 'scripts/validate_params.py'
       - '.github/workflows/validate_params.yml'
   workflow_dispatch:
