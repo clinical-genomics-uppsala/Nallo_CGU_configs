@@ -5,6 +5,7 @@ import sys
 import glob
 import argparse
 import urllib.request
+import urllib.error
 import os
 
 def download_schema(version="0.11.0", output_path="nallo_schema.json"):
@@ -12,17 +13,19 @@ def download_schema(version="0.11.0", output_path="nallo_schema.json"):
     url = f"https://raw.githubusercontent.com/genomic-medicine-sweden/nallo/v{version.lstrip('v')}/nextflow_schema.json"
     print(f"Downloading schema from {url} ...")
     try:
-        urllib.request.urlretrieve(url, output_path)
+        with urllib.request.urlopen(url, timeout=30) as response, open(output_path, 'wb') as f:
+            f.write(response.read())
         print("Download successful.")
-    except Exception as e:
+    except (urllib.error.URLError, TimeoutError, OSError) as e:
         print(f"Failed to download schema: {e}")
         # fallback without 'v'
         fallback_url = f"https://raw.githubusercontent.com/genomic-medicine-sweden/nallo/{version.lstrip('v')}/nextflow_schema.json"
         print(f"Trying fallback url: {fallback_url} ...")
         try:
-            urllib.request.urlretrieve(fallback_url, output_path)
+            with urllib.request.urlopen(fallback_url, timeout=10) as fallback_response, open(output_path, 'wb') as f:
+                f.write(fallback_response.read())
             print("Download successful.")
-        except Exception as fallback_e:
+        except (urllib.error.URLError, TimeoutError, OSError) as fallback_e:
             print(f"Failed to download schema: {fallback_e}")
             sys.exit(1)
 
@@ -46,7 +49,7 @@ def main():
     param_files = glob.glob(os.path.join(args.params_dir, "*.json"))
     if not param_files:
         print(f"No JSON files found in {args.params_dir}/")
-        sys.exit(0)
+        sys.exit(1)
 
     for param_file in param_files:
         print(f"\nChecking {param_file} ...")
@@ -61,8 +64,16 @@ def main():
         errors = sorted(validator.iter_errors(instance), key=lambda e: e.path)
         
         # We expect input and outdir to be missing since they are CLI arguments
-        expected_missing = ["'input' is a required property", "'outdir' is a required property"]
-        actual_errors = [e for e in errors if not (e.validator == "required" and e.message in expected_missing)]
+        ignored_root_required = {"input", "outdir"}
+
+        def is_ignored_required(err):
+            if err.validator != "required":
+                return False
+            if len(err.path) != 0:  # only suppress root-level required errors
+                return False
+            return err.message in {f"'{k}' is a required property" for k in ignored_root_required}
+
+        actual_errors = [e for e in errors if not is_ignored_required(e)]
         
         if actual_errors:
             success = False
