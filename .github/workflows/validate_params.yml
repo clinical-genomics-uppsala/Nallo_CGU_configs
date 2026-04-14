@@ -1,0 +1,36 @@
+name: Validate Parameters
+
+on:
+  pull_request:
+    paths:
+      - 'params/**/*.json'
+      - 'COMPATIBILITY.md'
+      - 'scripts/validate_params.py'
+      - '.github/workflows/validate_params.yml'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate Nallo Parameters
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install jsonschema
+
+      - name: Run Schema Validation
+        run: |
+          VERSION=$(grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' COMPATIBILITY.md | head -n 1)
+          if [ -z "$VERSION" ]; then
+            echo "Error: Could not find version in COMPATIBILITY.md"
+            exit 1
+          fi
+          echo "Validating using Nallo version: $VERSION"
+          python scripts/validate_params.py --schema-version "$VERSION" --force-download
