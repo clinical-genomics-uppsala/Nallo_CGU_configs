@@ -22,7 +22,7 @@ def download_schema(version="0.11.0", output_path="nallo_schema.json"):
         fallback_url = f"https://raw.githubusercontent.com/genomic-medicine-sweden/nallo/{version.lstrip('v')}/nextflow_schema.json"
         print(f"Trying fallback url: {fallback_url} ...")
         try:
-            with urllib.request.urlopen(fallback_url, timeout=10) as fallback_response, open(output_path, 'wb') as f:
+            with urllib.request.urlopen(fallback_url, timeout=30) as fallback_response, open(output_path, 'wb') as f:
                 f.write(fallback_response.read())
             print("Download successful.")
         except (urllib.error.URLError, TimeoutError, OSError) as fallback_e:
