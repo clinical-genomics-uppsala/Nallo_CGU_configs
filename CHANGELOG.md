@@ -1,4 +1,11 @@
 # Changelog
+## [1.3.0](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/compare/v1.2.0...v1.3.0) (2026-04-14)
+
+
+### Features
+
+* update params and compatability test for nallo version ([#41](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/issues/41)) ([2317818](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/commit/231781877671a46964583f323d5125ccf26c541d))
+
 ## [1.2.0](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/compare/v1.1.4...v1.2.0) (2026-02-11)
 
 
