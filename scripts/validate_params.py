@@ -80,7 +80,7 @@ def main():
             for e in actual_errors:
                 print(f"  ❌ Error: {e.message}")
         else:
-            print(f"  ✅ Validation passed")
+            print("  ✅ Validation passed")
 
     if not success:
         print("\nValidation failed for one or more files.")
