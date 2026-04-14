@@ -1,11 +1,6 @@
 name: Test Nallo Config
 
 on:
-  push:
-    paths:
-      - 'config/**'
-      - 'COMPATIBILITY.md'
-      - '.github/workflows/test_config.yml'
   pull_request:
     paths:
       - 'config/**'
