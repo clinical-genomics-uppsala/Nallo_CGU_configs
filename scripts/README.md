@@ -32,6 +32,20 @@ A comma-separated values (CSV) file containing sample metadata. It must contain 
 * `Provnummer`: The identifier for the sample (used to match against the `sample` column in the units file). *(Note: Purely numeric entries are automatically prefixed with `D-`)*.
 * `Sex`: The biological sex of the sample. Accepted values: `Male`, `Female`, `Unknown`, or `NA`. (The script maps these to PED pedigree integers: Male=1, Female=2, Unknown=0).
 
+**Note**: The samples-info is added before the rename map file is applied. This means that if you need the samples-info file should contain sample ids that match the sample ids in the units file, before any renaming is done. This is done on purpose, as the sample info that comes from the lab uses the sample id that is in the SM tag of the uBAM file, which is what is used in the units file.
+
+### 3. Rename Map File (`--rename-map`)
+A tab-separated values (TSV) file containing a rename mapping. It must contain the following columns:
+* `old_name`: The old name for the sample.
+* `new_name`: The new name for the sample.
+
+This option is useful for projects where the sample names in the uBAM SM tag is not the sample id that is required for the project. For example, if the sample names in the uBAM SM tag is "NA12878" and the sample id that is required for the project is "HG001", then the rename map file should contain the following:
+
+```tsv
+old_name	new_name
+NA12878	HG001
+```
+
 **Note:** Seqone does not handle trio or family VCFs. Therefore, this script automatically generates a singleton-based Nallo samplesheet. It automatically sets `family_id` to the sample ID, and defaults `paternal_id`, `maternal_id`, and `phenotype` to `0` (missing/unknown). 
 
 ## Output File Formats
