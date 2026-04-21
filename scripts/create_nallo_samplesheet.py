@@ -30,6 +30,7 @@ def main():
     parser.add_argument('--units', required=True, help='Path to units TSV file')
     parser.add_argument('--samples-info', required=True, help='Path to samples info CSV file')
     parser.add_argument('--project-id', required=True, help='Project ID string')
+    parser.add_argument('--rename-map', required=False , help='Path to file listing rename mappings (two columns: old_name\tnew_name)')
     parser.add_argument('--output', default='nallo_samplesheet.csv', help='Output CSV file path (default: nallo_samplesheet.csv)')
     args = parser.parse_args()
 
@@ -43,6 +44,13 @@ def main():
 
     samples_info = pd.read_csv(args.samples_info)
     validate_columns(samples_info, ["Provnummer", "Sex"], args.samples_info)
+
+    #Optional: rename samples
+    if args.rename_map:
+        rename_map = pd.read_csv(args.rename_map, sep="\t")
+        validate_columns(rename_map, ["old_name", "new_name"], args.rename_map)
+        rename_dict = dict(zip(rename_map["old_name"], rename_map["new_name"]))
+        samples_info["Provnummer"] = samples_info["Provnummer"].replace(rename_dict)
 
     # Also prefix Provnummer for numeric entries
     samples_info["Provnummer"] = samples_info["Provnummer"].astype(str)

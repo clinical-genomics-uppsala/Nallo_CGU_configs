@@ -371,3 +371,59 @@ def test_mixed_numeric_and_alphanumeric_samples(tmp_path):
     row2 = result_df[result_df["sample"] == "D99-07356"].iloc[0]
     assert row2["sex"] == 2  # Female
 
+def test_rename_samples(tmp_path):
+    # Create dummy units.tsv
+    units_data = {
+        "sample": ["sample1", "sample2"],
+        "bam": ["/path/to/sample1.bam", "/path/to/sample2.bam"]
+    }
+    units_file = tmp_path / "units.tsv"
+    pd.DataFrame(units_data).to_csv(units_file, sep="\t", index=False)
+
+    # Create dummy samples_info.csv
+    samples_info_data = {
+        "Provnummer": ["sample1", "sample2"],
+        "Sex": ["Male", "Female"]
+    }
+    samples_info_file = tmp_path / "samples_info.csv"
+    pd.DataFrame(samples_info_data).to_csv(samples_info_file, index=False)
+
+    # Create dummy rename_map.tsv
+    rename_map_data = {
+        "old_name": ["sample1"],
+        "new_name": ["sample1_renamed"]
+    }
+    rename_map_file = tmp_path / "rename_map.tsv"
+    pd.DataFrame(rename_map_data).to_csv(rename_map_file, sep="\t", index=False)
+
+    project_id = "TEST_PROJECT"
+    output_file = tmp_path / "nallo_samplesheet.csv"
+
+    cmd = [
+        sys.executable,
+        SCRIPT_PATH,
+        "--units", str(units_file),
+        "--samples-info", str(samples_info_file),
+        "--project-id", project_id,
+        "--rename-map", str(rename_map_file)
+    ]
+
+    result = subprocess.run(cmd, cwd=tmp_path, capture_output=True, text=True)
+    assert result.returncode == 0, f"Script failed with stderr: {result.stderr}"
+    
+    result_df = pd.read_csv(output_file)
+    assert len(result_df) == 2
+    
+    # Check that sample was renamed
+    assert "sample1_renamed" in result_df["sample"].values
+    # Check that the other sample was not renamed
+    assert "sample2" in result_df["sample"].values
+    
+    # Verify the merge worked correctly
+    row1 = result_df[result_df["sample"] == "sample1_renamed"].iloc[0]
+    assert row1["sex"] == 1  # Male
+    
+    row2 = result_df[result_df["sample"] == "sample2"].iloc[0]
+    assert row2["sex"] == 2  # Female
+
+    
