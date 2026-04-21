@@ -30,6 +30,7 @@ def main():
     parser.add_argument('--units', required=True, help='Path to units TSV file')
     parser.add_argument('--samples-info', required=True, help='Path to samples info CSV file')
     parser.add_argument('--project-id', required=True, help='Project ID string')
+    parser.add_argument('--rename-map', required=False , help='Path to file listing rename mappings (two columns: old_name\tnew_name)')
     parser.add_argument('--output', default='nallo_samplesheet.csv', help='Output CSV file path (default: nallo_samplesheet.csv)')
     args = parser.parse_args()
 
@@ -53,6 +54,32 @@ def main():
 
 
     samplesheet_df = pd.merge(units, samples_info, left_on="sample", right_on="Provnummer", how="inner")
+
+    #Optional: rename samples
+    if args.rename_map:
+        rename_map = pd.read_csv(args.rename_map, sep="\t", dtype=str)
+        validate_columns(rename_map, ["old_name", "new_name"], args.rename_map)
+
+        # Fail fast on null entries
+        null_rows = rename_map[rename_map[["old_name", "new_name"]].isnull().any(axis=1)]
+        if not null_rows.empty:
+            print(f"Error: rename_map contains null values:\n{null_rows.to_string()}", file=sys.stderr)
+            sys.exit(1)
+
+        # Normalise old_name the same way units["sample"] is normalised
+        rename_map["old_name"] = rename_map["old_name"].astype(str)
+        numeric_mask_rename = rename_map["old_name"].str.match(r'^\d+$')
+        rename_map.loc[numeric_mask_rename, "old_name"] = "D-" + rename_map.loc[numeric_mask_rename, "old_name"]
+
+        # Fail fast on duplicate old_name entries
+        duplicates = rename_map[rename_map["old_name"].duplicated(keep=False)]
+        if not duplicates.empty:
+            print(f"Error: rename_map contains duplicate old_name entries:\n{duplicates.to_string()}", file=sys.stderr)
+            sys.exit(1)
+
+        rename_dict = dict(zip(rename_map["old_name"], rename_map["new_name"]))
+        samplesheet_df["sample"] = samplesheet_df["sample"].replace(rename_dict)
+
     samplesheet_df["sex"] = samplesheet_df["Sex"].fillna("NA").replace({"Male": 1, "Female": 2, "NA": 0, "Unknown": 0})
     samplesheet_df["family_id"] = samplesheet_df["sample"]
     samplesheet_df["paternal_id"] = ["0"] * samplesheet_df.shape[0]

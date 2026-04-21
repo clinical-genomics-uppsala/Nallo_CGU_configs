@@ -29,17 +29,18 @@ jobs:
           fi
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Run Nextflow Stub
+      - name: Run Nextflow Stub with CGU seqone outfile naming
         run: |
           nextflow run genomic-medicine-sweden/nallo \
             -r "${{ env.VERSION }}" \
             -profile test,docker \
             -c config/nallo_CGU.config \
+            -c config/nallo_CGU_seqone.config \
             -stub \
             --outdir nallo_res
 
 
-      - name: Verify Expected CGU Output Filenames
+      - name: Verify Expected seqone Output Filenames
         run: |
           if [ ! -f "nallo_res/snvs/family/FAM/FAM.hard-filtered.vcf.gz" ]; then
             echo "Error: Expected clinical SNV output nallo_res/snvs/family/FAM/FAM.hard-filtered.vcf.gz not found!"
