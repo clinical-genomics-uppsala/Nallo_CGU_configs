@@ -2,17 +2,19 @@
 
 
 ```bash
-Usage: create_nallo_samplesheet.py [-h] --units UNITS --samples-info SAMPLES_INFO --project-id PROJECT_ID [--output OUTPUT]
+usage: create_nallo_samplesheet.py [-h] --units UNITS --samples-info SAMPLES_INFO --project-id PROJECT_ID [--rename-map RENAME_MAP] [--output OUTPUT]
 
 Create Nallo samplesheet from units and sample info files
 
-options: 
-  -h, --help            show this help message and exit 
-  --units UNITS         Path to units TSV file 
+options:
+  -h, --help            show this help message and exit
+  --units UNITS         Path to units TSV file
   --samples-info SAMPLES_INFO
                         Path to samples info CSV file
   --project-id PROJECT_ID
                         Project ID string
+  --rename-map RENAME_MAP
+                        Path to file listing rename mappings (two columns: old_name new_name)
   --output OUTPUT       Output CSV file path (default: nallo_samplesheet.csv)
 
 ```
@@ -32,7 +34,7 @@ A comma-separated values (CSV) file containing sample metadata. It must contain 
 * `Provnummer`: The identifier for the sample (used to match against the `sample` column in the units file). *(Note: Purely numeric entries are automatically prefixed with `D-`)*.
 * `Sex`: The biological sex of the sample. Accepted values: `Male`, `Female`, `Unknown`, or `NA`. (The script maps these to PED pedigree integers: Male=1, Female=2, Unknown=0).
 
-**Note**: The samples-info is added before the rename map file is applied. This means that if you need the samples-info file should contain sample ids that match the sample ids in the units file, before any renaming is done. This is done on purpose, as the sample info that comes from the lab uses the sample id that is in the SM tag of the uBAM file, which is what is used in the units file.
+**Note**: The samples-info file is merged before the rename map is applied. Therefore, samples-info sample IDs must match the sample IDs in the units file before any renaming is done. This is deliberate because lab-provided sample info uses the sample ID from the uBAM SM tag, which is also used in the units file.
 
 ### 3. Rename Map File (`--rename-map`)
 A tab-separated values (TSV) file containing a rename mapping. It must contain the following columns:
