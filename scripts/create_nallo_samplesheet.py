@@ -45,13 +45,6 @@ def main():
     samples_info = pd.read_csv(args.samples_info)
     validate_columns(samples_info, ["Provnummer", "Sex"], args.samples_info)
 
-    #Optional: rename samples
-    if args.rename_map:
-        rename_map = pd.read_csv(args.rename_map, sep="\t")
-        validate_columns(rename_map, ["old_name", "new_name"], args.rename_map)
-        rename_dict = dict(zip(rename_map["old_name"], rename_map["new_name"]))
-        samples_info["Provnummer"] = samples_info["Provnummer"].replace(rename_dict)
-
     # Also prefix Provnummer for numeric entries
     samples_info["Provnummer"] = samples_info["Provnummer"].astype(str)
     numeric_mask_info = samples_info["Provnummer"].str.match(r'^\d+$')
@@ -61,6 +54,14 @@ def main():
 
 
     samplesheet_df = pd.merge(units, samples_info, left_on="sample", right_on="Provnummer", how="inner")
+
+    #Optional: rename samples
+    if args.rename_map:
+        rename_map = pd.read_csv(args.rename_map, sep="\t")
+        validate_columns(rename_map, ["old_name", "new_name"], args.rename_map)
+        rename_dict = dict(zip(rename_map["old_name"], rename_map["new_name"]))
+        samplesheet_df["sample"] = samplesheet_df["sample"].replace(rename_dict)
+
     samplesheet_df["sex"] = samplesheet_df["Sex"].fillna("NA").replace({"Male": 1, "Female": 2, "NA": 0, "Unknown": 0})
     samplesheet_df["family_id"] = samplesheet_df["sample"]
     samplesheet_df["paternal_id"] = ["0"] * samplesheet_df.shape[0]
