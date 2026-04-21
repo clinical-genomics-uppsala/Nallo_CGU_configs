@@ -371,6 +371,7 @@ def test_mixed_numeric_and_alphanumeric_samples(tmp_path):
     row2 = result_df[result_df["sample"] == "D99-07356"].iloc[0]
     assert row2["sex"] == 2  # Female
 
+
 def test_rename_samples(tmp_path):
     # Create dummy units.tsv
     units_data = {
@@ -426,4 +427,126 @@ def test_rename_samples(tmp_path):
     row2 = result_df[result_df["sample"] == "sample2"].iloc[0]
     assert row2["sex"] == 2  # Female
 
-    
+
+def test_rename_map_numeric_normalisation(tmp_path):
+    """Numeric old_name in rename_map should receive the D- prefix before lookup,
+    matching the normalised sample IDs already present in the merged sheet."""
+    # Create dummy units.tsv with numeric sample IDs
+    units_data = {
+        "sample": ["12345", "67890"],
+        "bam": ["/path/to/12345.bam", "/path/to/67890.bam"]
+    }
+    units_file = tmp_path / "units.tsv"
+    pd.DataFrame(units_data).to_csv(units_file, sep="\t", index=False)
+
+    # Create dummy samples_info.csv
+    samples_info_data = {
+        "Provnummer": ["12345", "67890"],
+        "Sex": ["Male", "Female"]
+    }
+    samples_info_file = tmp_path / "samples_info.csv"
+    pd.DataFrame(samples_info_data).to_csv(samples_info_file, index=False)
+
+    # old_name is a bare numeric string — script must apply D- prefix before matching
+    rename_map_data = {"old_name": ["12345"], "new_name": ["HG001"]}
+    rename_map_file = tmp_path / "rename_map.tsv"
+    pd.DataFrame(rename_map_data).to_csv(rename_map_file, sep="\t", index=False)
+
+    project_id = "TEST_PROJECT"
+    output_file = tmp_path / "nallo_samplesheet.csv"
+
+    cmd = [
+        sys.executable,
+        SCRIPT_PATH,
+        "--units", str(units_file),
+        "--samples-info", str(samples_info_file),
+        "--project-id", project_id,
+        "--rename-map", str(rename_map_file)
+    ]
+
+    result = subprocess.run(cmd, cwd=tmp_path, capture_output=True, text=True)
+    assert result.returncode == 0, f"Script failed with stderr: {result.stderr}"
+
+    result_df = pd.read_csv(output_file)
+    assert len(result_df) == 2
+
+    # 12345 → normalised to D-12345 → renamed to HG001
+    assert "HG001" in result_df["sample"].values, \
+        "Numeric old_name was not normalised and matched correctly"
+    # 67890 → normalised to D-67890, not in rename map → unchanged
+    assert "D-67890" in result_df["sample"].values
+
+
+def test_rename_map_null_values_rejected(tmp_path):
+    """A rename_map containing null old_name or new_name entries must cause a non-zero exit."""
+    units_data = {
+        "sample": ["12345", "67890"],
+        "bam": ["/path/to/12345.bam", "/path/to/67890.bam"]
+    }
+    units_file = tmp_path / "units.tsv"
+    pd.DataFrame(units_data).to_csv(units_file, sep="\t", index=False)
+
+    samples_info_data = {
+        "Provnummer": ["12345", "67890"],
+        "Sex": ["Male", "Female"]
+    }
+    samples_info_file = tmp_path / "samples_info.csv"
+    pd.DataFrame(samples_info_data).to_csv(samples_info_file, index=False)
+
+    # Second row has a null old_name
+    rename_map_data = {"old_name": ["12345", None], "new_name": ["HG001", "HG002"]}
+    rename_map_file = tmp_path / "rename_map.tsv"
+    pd.DataFrame(rename_map_data).to_csv(rename_map_file, sep="\t", index=False)
+
+    cmd = [
+        sys.executable,
+        SCRIPT_PATH,
+        "--units", str(units_file),
+        "--samples-info", str(samples_info_file),
+        "--project-id", "TEST_PROJECT",
+        "--rename-map", str(rename_map_file)
+    ]
+
+    result = subprocess.run(cmd, cwd=tmp_path, capture_output=True, text=True)
+    assert result.returncode != 0, "Script should fail when rename_map contains null values"
+    assert "null" in result.stderr.lower() or "error" in result.stderr.lower(), \
+        f"Expected an error message in stderr, got: {result.stderr}"
+
+
+def test_rename_map_duplicate_old_name_rejected(tmp_path):
+    """A rename_map with duplicate old_name entries must cause a non-zero exit."""
+    units_data = {
+        "sample": ["12345", "67890"],
+        "bam": ["/path/to/12345.bam", "/path/to/67890.bam"]
+    }
+    units_file = tmp_path / "units.tsv"
+    pd.DataFrame(units_data).to_csv(units_file, sep="\t", index=False)
+
+    samples_info_data = {
+        "Provnummer": ["12345", "67890"],
+        "Sex": ["Male", "Female"]
+    }
+    samples_info_file = tmp_path / "samples_info.csv"
+    pd.DataFrame(samples_info_data).to_csv(samples_info_file, index=False)
+
+    # Same old_name appears twice with different new_name values
+    rename_map_data = {
+        "old_name": ["12345", "12345"],
+        "new_name": ["HG001", "HG002"]
+    }
+    rename_map_file = tmp_path / "rename_map.tsv"
+    pd.DataFrame(rename_map_data).to_csv(rename_map_file, sep="\t", index=False)
+
+    cmd = [
+        sys.executable,
+        SCRIPT_PATH,
+        "--units", str(units_file),
+        "--samples-info", str(samples_info_file),
+        "--project-id", "TEST_PROJECT",
+        "--rename-map", str(rename_map_file)
+    ]
+
+    result = subprocess.run(cmd, cwd=tmp_path, capture_output=True, text=True)
+    assert result.returncode != 0, "Script should fail when rename_map has duplicate old_name entries"
+    assert "duplicate" in result.stderr.lower() or "error" in result.stderr.lower(), \
+        f"Expected an error message in stderr, got: {result.stderr}"
