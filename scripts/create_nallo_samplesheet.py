@@ -57,7 +57,6 @@ def main():
 
     #Optional: rename samples
     if args.rename_map:
-<<<<<<< HEAD
         rename_map = pd.read_csv(args.rename_map, sep="\t", dtype=str)
         validate_columns(rename_map, ["old_name", "new_name"], args.rename_map)
 
@@ -78,10 +77,6 @@ def main():
             print(f"Error: rename_map contains duplicate old_name entries:\n{duplicates.to_string()}", file=sys.stderr)
             sys.exit(1)
 
-=======
-        rename_map = pd.read_csv(args.rename_map, sep="\t")
-        validate_columns(rename_map, ["old_name", "new_name"], args.rename_map)
->>>>>>> 495c9f9 (fix: move renameing until after sample info is added)
         rename_dict = dict(zip(rename_map["old_name"], rename_map["new_name"]))
         samplesheet_df["sample"] = samplesheet_df["sample"].replace(rename_dict)
 
