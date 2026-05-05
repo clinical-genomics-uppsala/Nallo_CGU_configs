@@ -1,4 +1,13 @@
 # Changelog
+## [1.4.0](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/compare/v1.3.0...v1.4.0) (2026-05-05)
+
+
+### Features
+
+* add config and params for projects not requiring seqone naming ([c3dc310](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/commit/c3dc31073dd057e425d40a09285146fe8dd82c62))
+* add option to rename the samples to ids not in the BAM SM field ([ad7ef41](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/commit/ad7ef4117cee093c99a69a69ba9309985e55baf7))
+* increas Hifiasm cpu and ram ([ff5370b](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/commit/ff5370b2768f71b1366746f66093ccf6f300e923))
+
 ## [1.3.0](https://github.com/clinical-genomics-uppsala/Nallo_CGU_configs/compare/v1.2.0...v1.3.0) (2026-04-14)
 
 
